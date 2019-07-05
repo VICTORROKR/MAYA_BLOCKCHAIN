@@ -27,6 +27,9 @@ import { AgmCoreModule } from '@agm/core';
 //Para QR
 import { NgxQRCodeModule } from 'ngx-qrcode2';
 
+//Para APIs REST
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [AppComponent],
   // declarations: [AppComponent, NewTaskModalPage],
@@ -46,7 +49,8 @@ import { NgxQRCodeModule } from 'ngx-qrcode2';
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAsItvwpqZuZQcbDyM6Dy2cu_3Hoo_V1_I' // Api Key para Google Maps
     }),
-    NgxQRCodeModule
+    NgxQRCodeModule,
+    HttpClientModule
   ],
   providers: [
     StatusBar,
