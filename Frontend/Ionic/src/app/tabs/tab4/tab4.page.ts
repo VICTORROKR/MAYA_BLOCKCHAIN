@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { EmployeeService } from '../../services/employee.service';
 import { NgForm } from '@angular/forms';
 import { Employee } from '../../models/employee';
@@ -12,10 +14,23 @@ declare var M: any;
 })
 export class Tab4Page implements OnInit {
 
-  constructor(private employeeService: EmployeeService) { }
+  constructor(private employeeService: EmployeeService,
+              public toastController: ToastController,
+              public alertController: AlertController) { }
 
   ngOnInit() {
     this.getEmployees();
+  }
+
+  //Toast
+  async presentToast() {
+    const toast = await this.toastController.create({
+      position: 'top',
+      color: 'dark',
+      message: 'Your settings have been saved.',
+      duration: 2000
+    });
+    toast.present();
   }
 
   addEmployee(form?: NgForm) {
@@ -25,14 +40,14 @@ export class Tab4Page implements OnInit {
         .subscribe(res => {
           this.resetForm(form);
           this.getEmployees();
-          M.toast({html: 'Updated Successfully'});
+          this.presentToast();
         });
     } else {
       this.employeeService.postEmployee(form.value)
       .subscribe(res => {
         this.getEmployees();
         this.resetForm(form);
-        M.toast({html: 'Save successfully'});
+        this.presentToast();
       });
     }
     
@@ -55,9 +70,39 @@ export class Tab4Page implements OnInit {
         .subscribe(res => {
           this.getEmployees();
           this.resetForm(form);
-          M.toast({html: 'Deleted Succesfully'});
+          this.presentToast();
         });
     }
+  }
+
+  //Delete employed
+  async deleteEmployeeAlert(_id: string, form: NgForm) {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Message <strong>text</strong>!!!',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Okay',
+          handler: () => {
+            console.log('Confirm Okay');
+            this.employeeService.deleteEmployee(_id)
+        .subscribe(res => {
+          this.getEmployees();
+          this.resetForm(form);
+          this.presentToast();
+        });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   resetForm(form?: NgForm) {
